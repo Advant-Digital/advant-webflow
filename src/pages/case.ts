@@ -21,6 +21,15 @@ function initTagLinks(): void {
   })
 }
 
+function injectSliderStyles(): void {
+  const style = document.createElement('style')
+  style.textContent = `
+    .splide__video { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .splide__video iframe { width: 100%; height: 100%; }
+  `
+  document.head.appendChild(style)
+}
+
 function initHeroSlider(): void {
   const el = document.querySelector<HTMLElement>('[data-hero-slider]')
   if (!el) return
@@ -50,6 +59,7 @@ function initHeroSlider(): void {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  injectSliderStyles()
   initHeroHeading()
   initResultsButton()
   initTagLinks()
