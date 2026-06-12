@@ -85,14 +85,10 @@ All CMS collection names, field names, HTML classes, and IDs must be in **Englis
 | Sticker Text | Plain text | Circular sticker overlay on hero media. Hidden if empty. |
 | Sticker Color | Option (Lime / Lilac / Pink / Sand) | Hidden if empty. |
 | Tags | Multi-reference → Tags | Clickable filterable pills. |
-| Meta 1 Label | Plain text | e.g. "Client" |
-| Meta 1 Value | Plain text | e.g. "Region Värmland" |
-| Meta 2 Label | Plain text | |
-| Meta 2 Value | Plain text | |
-| Meta 3 Label | Plain text | |
-| Meta 3 Value | Plain text | |
-| Meta 4 Label | Plain text | |
-| Meta 4 Value | Plain text | |
+| Client | Plain text | e.g. "Region Värmland" |
+| Mission | Plain text | |
+| Industry | Plain text | |
+| Awards Summary | Plain text | Short awards line, e.g. "Guldvargen Gold 2019". Labels hardcoded in template. |
 | Challenge Pre-heading | Plain text | |
 | Challenge Heading | Plain text | |
 | Challenge Body | Rich text | |
@@ -113,7 +109,7 @@ All CMS collection names, field names, HTML classes, and IDs must be in **Englis
 | Lead | Reference → Coworkers | The Advant team member who led the case. |
 | Lead Role | Plain text | Case-specific role, e.g. "Strategist & project lead". |
 | Related Cases | Multi-reference → Case | Up to 3. Auto-filled by JS if fewer than 3 selected. |
-| Category | Reference → Category | Drives auto related cases filter. |
+| Category | Reference → Case Category | Drives auto related cases filter. Collection named "Case Category" to avoid slug conflict with Velos theme. |
 
 ---
 
