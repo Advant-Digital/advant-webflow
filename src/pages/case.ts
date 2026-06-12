@@ -36,17 +36,15 @@ function initHeroSlider(): void {
     },
   })
 
-  splide.on('video:play', (_player, index) => {
-    const slide = splide.Components.Slides.getAt(index)?.slide
-    const thumb = slide?.querySelector<HTMLElement>('[data-video-thumb]')
-    if (thumb) thumb.style.visibility = 'hidden'
-  })
+  const setThumbVisibility = (visible: boolean) => {
+    el.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(thumb => {
+      thumb.style.display = visible ? '' : 'none'
+    })
+  }
 
-  splide.on('video:pause video:end', (_player, index) => {
-    const slide = splide.Components.Slides.getAt(index)?.slide
-    const thumb = slide?.querySelector<HTMLElement>('[data-video-thumb]')
-    if (thumb) thumb.style.visibility = 'visible'
-  })
+  splide.on('video:play', () => setThumbVisibility(false))
+  splide.on('video:pause', () => setThumbVisibility(true))
+  splide.on('video:end', () => setThumbVisibility(true))
 
   splide.mount({ Video })
 }
