@@ -81,9 +81,9 @@ All CMS collection names, field names, HTML classes, and IDs must be in **Englis
 |---|---|---|
 | Name | Plain text | Case name. Generates slug/URL. |
 | Hero Heading | Plain text | Optional. Falls back to Name via JS if empty. |
-| Preamble | Plain text (long) | Lead text below hero headline. |
-| Sticker Text | Plain text | Circular sticker overlay on hero media. Hidden if empty. |
-| Sticker Color | Option (Lime / Lilac / Pink / Sand) | Hidden if empty. |
+| Hero Preamble | Plain text (long) | Lead text below hero headline. |
+| Hero Sticker Text | Plain text | Circular sticker overlay on hero media. Hidden if empty. |
+| Hero Sticker Color | Option (Lime / Lilac / Pink / Sand) | Hidden if empty. |
 | Tags | Multi-reference → Tags | Clickable filterable pills. |
 | Client | Plain text | e.g. "Region Värmland" |
 | Mission | Plain text | |
@@ -99,15 +99,15 @@ All CMS collection names, field names, HTML classes, and IDs must be in **Englis
 | Creative Solution Pre-heading | Plain text | |
 | Creative Solution Heading | Plain text | |
 | Creative Solution Body | Rich text | |
-| Gallery | Multi-image | Auto-layout via CSS Grid. Variable number of images. |
+| Creative Solution Gallery | Multi-image | Auto-layout via CSS Grid. Variable number of images. |
 | Effect Pre-heading | Plain text | |
 | Effect Heading | Plain text | |
 | Effect Body | Plain text (long) | Intro line for the dark stats block. |
 | Expert Pre-heading | Plain text | |
 | Expert Heading | Plain text | |
 | Expert Body | Rich text | |
-| Lead | Reference → Coworkers | The Advant team member who led the case. |
-| Lead Role | Plain text | Case-specific role, e.g. "Strategist & project lead". |
+| Expert Lead | Reference → Coworkers | The Advant team member who led the case. |
+| Expert Lead Role | Plain text | Case-specific role, e.g. "Strategist & project lead". |
 | Related Cases | Multi-reference → Case | Up to 3. Auto-filled by JS if fewer than 3 selected. |
 | Category | Reference → Case Category | Drives auto related cases filter. Collection named "Case Category" to avoid slug conflict with Velos theme. |
 
