@@ -25,7 +25,11 @@ function injectSliderStyles(): void {
   const style = document.createElement('style')
   style.textContent = `
     .splide__video { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .splide__video iframe { width: 100%; height: 100%; }
+    .splide__video__wrapper { width: 100%; height: 100%; }
+    .splide__video__wrapper > div { width: 100%; height: 100%; }
+    .splide__video__wrapper iframe { width: 100% !important; height: 100% !important; }
+    .splide__video__play { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; z-index: 10; cursor: pointer; }
+    .hero-play-btn { pointer-events: none; }
   `
   document.head.appendChild(style)
 }
