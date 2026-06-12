@@ -1,22 +1,9 @@
 import { defineConfig } from 'vite'
-import { resolve } from 'path'
 
+// Note: Build is handled by build.js using esbuild, not Vite's Rollup.
+// Rollup 4 does not support IIFE format with multiple entry points,
+// but esbuild does. See build.js for the IIFE build configuration.
 export default defineConfig({
-  build: {
-    rollupOptions: {
-      input: {
-        global: resolve(__dirname, 'src/global/index.ts'),
-        case: resolve(__dirname, 'src/pages/case.ts'),
-      },
-      output: {
-        entryFileNames: '[name].js',
-        chunkFileNames: '[name]-[hash].js',
-        format: 'es',
-      },
-    },
-    outDir: 'dist',
-    emptyOutDir: true,
-  },
   test: {
     environment: 'node',
   },
