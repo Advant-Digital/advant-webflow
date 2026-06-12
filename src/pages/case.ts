@@ -30,8 +30,6 @@ function initHeroSlider(): void {
     rewind: true,
     pagination: true,
     arrows: true,
-    heightRatio: 0.5625, // 16:9
-    cover: true,
     video: {
       autoplay: false,
       mute: false,
