@@ -49,15 +49,25 @@ function initHeroSlider(): void {
     },
   })
 
-  const setThumbVisibility = (visible: boolean) => {
+  splide.on('video:play', () => {
     el.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(thumb => {
-      thumb.style.display = visible ? '' : 'none'
+      thumb.style.display = 'none'
     })
-  }
-
-  splide.on('video:play', () => setThumbVisibility(false))
-  splide.on('video:pause', () => setThumbVisibility(true))
-  splide.on('video:end', () => setThumbVisibility(true))
+    el.querySelectorAll<HTMLElement>('.splide__video__wrapper').forEach(wrapper => {
+      wrapper.style.width = '100%'
+      wrapper.style.height = '100%'
+      const vimeoDiv = wrapper.querySelector<HTMLElement>('[data-vimeo-initialized]')
+      if (vimeoDiv) {
+        vimeoDiv.style.width = '100%'
+        vimeoDiv.style.height = '100%'
+      }
+      const iframe = wrapper.querySelector<HTMLIFrameElement>('iframe')
+      if (iframe) {
+        iframe.style.width = '100%'
+        iframe.style.height = '100%'
+      }
+    })
+  })
 
   splide.mount({ Video })
 }
