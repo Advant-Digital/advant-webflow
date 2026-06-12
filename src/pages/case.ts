@@ -25,7 +25,7 @@ function initHeroSlider(): void {
   const el = document.querySelector<HTMLElement>('[data-hero-slider]')
   if (!el) return
 
-  new Splide(el, {
+  const splide = new Splide(el, {
     type: 'fade',
     rewind: true,
     pagination: true,
@@ -34,7 +34,21 @@ function initHeroSlider(): void {
       autoplay: false,
       mute: false,
     },
-  }).mount({ Video })
+  })
+
+  splide.on('video:play', (_player, index) => {
+    const slide = splide.Components.Slides.getAt(index)?.slide
+    const thumb = slide?.querySelector<HTMLElement>('[data-video-thumb]')
+    if (thumb) thumb.style.visibility = 'hidden'
+  })
+
+  splide.on('video:pause video:end', (_player, index) => {
+    const slide = splide.Components.Slides.getAt(index)?.slide
+    const thumb = slide?.querySelector<HTMLElement>('[data-video-thumb]')
+    if (thumb) thumb.style.visibility = 'visible'
+  })
+
+  splide.mount({ Video })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
