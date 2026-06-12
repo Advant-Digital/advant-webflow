@@ -14,5 +14,9 @@
     "typescript": "^5.4.0",
     "vite": "^5.2.0",
     "vitest": "^1.5.0"
+  },
+  "dependencies": {
+    "@splidejs/splide": "^4.1.4",
+    "@splidejs/splide-extension-video": "^0.8.0"
   }
 }
