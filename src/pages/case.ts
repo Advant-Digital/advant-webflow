@@ -36,7 +36,7 @@ function injectSliderStyles(): void {
     [data-video-timeline] { position: relative; cursor: pointer; flex: 1; background: rgba(214, 242, 119, 0.25); }
     [data-video-progress] { position: absolute; top: 0; left: 0; height: 100%; width: 0%; pointer-events: none; background: #D6F277; }
     [data-video-play-pause], [data-video-mute] { display: flex; align-items: center; }
-    [data-video-play-pause] svg, [data-video-mute] svg { display: block; height: 100%; width: auto; }
+    [data-video-play-pause] svg, [data-video-mute] svg { display: block; height: 100%; width: auto; aspect-ratio: 1; }
   `
   document.head.appendChild(style)
 }
