@@ -75,10 +75,10 @@ function initHeroSlider(): void {
     video: {
       autoplay: false,
       mute: false,
+      hideControls: true,
       disableOverlayUI: true,
       playerOptions: {
         vimeo: {
-
           title: false,
           byline: false,
           portrait: false,
@@ -115,7 +115,7 @@ function initHeroSlider(): void {
 
     // extPlayer is the extension's Player wrapper; .player = VimeoPlayer; .player.player = Vimeo SDK Player
     const sdkPlayer = extPlayer?.player?.player
-    if (sdkPlayer) {
+    if (sdkPlayer && sdkPlayer !== activePlayer) {
       activePlayer = sdkPlayer as unknown as Player
       activePlayer.on('timeupdate', ({ percent }: { percent: number }) => setProgress(percent))
     }
@@ -134,40 +134,47 @@ function initHeroSlider(): void {
 
   const videoComponent = () => (splide.Components as any).Video
 
+  // Thumbnail / overlay → start video
   el.addEventListener('click', e => {
     const target = e.target as HTMLElement
-
     if (!activePlayer && (target.closest('[data-video-thumb]') || target.closest('.splide__video__play'))) {
       videoComponent()?.play()
-      return
     }
+  })
 
-    if (!activePlayer) return
+  // Custom controls: stop propagation so PlayerUI's slide-level click handler
+  // (which toggles play/pause on any slide click) doesn't fire for our buttons.
+  el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(controls => {
+    controls.addEventListener('click', e => {
+      e.stopPropagation()
+      if (!activePlayer) return
+      const target = e.target as HTMLElement
 
-    if (target.closest('[data-video-mute]')) {
-      activePlayer.getMuted().then(muted => {
-        activePlayer!.setMuted(!muted)
-        setMuteIcon(!muted)
-      })
-      return
-    }
+      if (target.closest('[data-video-mute]')) {
+        activePlayer.getMuted().then(muted => {
+          activePlayer!.setMuted(!muted)
+          setMuteIcon(!muted)
+        })
+        return
+      }
 
-    const timeline = target.closest<HTMLElement>('[data-video-timeline]')
-    if (timeline) {
-      const rect = timeline.getBoundingClientRect()
-      const percent = Math.max(0, Math.min(1, ((e as MouseEvent).clientX - rect.left) / rect.width))
-      activePlayer.getDuration().then(duration => {
-        activePlayer!.setCurrentTime(percent * duration)
-      })
-      return
-    }
+      const timeline = target.closest<HTMLElement>('[data-video-timeline]')
+      if (timeline) {
+        const rect = timeline.getBoundingClientRect()
+        const percent = Math.max(0, Math.min(1, ((e as MouseEvent).clientX - rect.left) / rect.width))
+        activePlayer.getDuration().then(duration => {
+          activePlayer!.setCurrentTime(percent * duration)
+        })
+        return
+      }
 
-    if (target.closest('[data-video-play-pause]')) {
-      activePlayer.getPaused().then(paused => {
-        if (paused) activePlayer!.play()
-        else activePlayer!.pause()
-      })
-    }
+      if (target.closest('[data-video-play-pause]')) {
+        activePlayer.getPaused().then(paused => {
+          if (paused) activePlayer!.play()
+          else activePlayer!.pause()
+        })
+      }
+    })
   })
 
   splide.mount({ Video })
