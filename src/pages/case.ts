@@ -30,7 +30,8 @@ function injectSliderStyles(): void {
     .splide__video__wrapper > div { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block !important; }
     .splide__video__wrapper iframe { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
     [data-video-thumb] { position: absolute; inset: 0; z-index: 15; }
-    [data-video-thumb] .hero-play-btn { pointer-events: none; }
+    [data-video-thumb] .hero-play-btn { pointer-events: none; color: #000; }
+    [data-video-thumb] .hero-play-btn svg, [data-video-thumb] .hero-play-btn svg * { fill: #000 !important; }
     [data-video-timeline] { position: relative; cursor: pointer; flex: 1; background: rgba(214, 242, 119, 0.25); }
     [data-video-progress] { position: absolute; top: 0; left: 0; height: 100%; width: 0%; pointer-events: none; background: #D6F277; }
     [data-video-play-pause], [data-video-mute] { display: flex; align-items: center; }
@@ -79,9 +80,8 @@ function initHeroSlider(): void {
     activeIframe.contentWindow.postMessage(JSON.stringify(payload), 'https://player.vimeo.com')
   }
 
-  // Receive Vimeo postMessages for timeupdate and durationchange
   window.addEventListener('message', e => {
-    if (!activeIframe || e.source !== activeIframe.contentWindow) return
+    if (!activeIframe || typeof e.origin !== 'string' || !e.origin.includes('vimeo.com')) return
     try {
       const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
       if (data.event === 'timeupdate') setProgress(data.data?.percent ?? 0)
