@@ -26,6 +26,7 @@ function injectSliderStyles(): void {
   const style = document.createElement('style')
   style.textContent = `
     .splide__slide { overflow: hidden; }
+    .splide__arrows, .splide__pagination { display: none !important; }
     .splide__video { position: absolute; inset: 0; z-index: 1; display: block !important; }
     .splide__video__wrapper,
     .splide__video__wrapper > div { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block !important; }
