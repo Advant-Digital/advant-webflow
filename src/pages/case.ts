@@ -107,8 +107,9 @@ function initHeroSlider(): void {
   el.addEventListener('click', e => {
     const target = e.target as HTMLElement
 
-    if (target.closest('[data-video-thumb]')) {
+    if (!activePlayer && (target.closest('[data-video-thumb]') || target.closest('.splide__video__play'))) {
       videoComponent()?.play()
+      return
     }
 
     if (target.closest('[data-video-play-pause]') && activePlayer) {
