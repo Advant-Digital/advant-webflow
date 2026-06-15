@@ -141,15 +141,9 @@ function initHeroSlider(): void {
       return
     }
 
-    if (target.closest('[data-video-play-pause]') && activePlayer) {
-      activePlayer.getPaused().then(paused => {
-        if (paused) activePlayer!.play()
-        else activePlayer!.pause()
-      })
-      return
-    }
+    if (!activePlayer) return
 
-    if (target.closest('[data-video-mute]') && activePlayer) {
+    if (target.closest('[data-video-mute]')) {
       activePlayer.getMuted().then(muted => {
         activePlayer!.setMuted(!muted)
         setMuteIcon(!muted)
@@ -158,11 +152,19 @@ function initHeroSlider(): void {
     }
 
     const timeline = target.closest<HTMLElement>('[data-video-timeline]')
-    if (timeline && activePlayer) {
+    if (timeline) {
       const rect = timeline.getBoundingClientRect()
       const percent = Math.max(0, Math.min(1, ((e as MouseEvent).clientX - rect.left) / rect.width))
       activePlayer.getDuration().then(duration => {
         activePlayer!.setCurrentTime(percent * duration)
+      })
+      return
+    }
+
+    if (target.closest('[data-video-play-pause]')) {
+      activePlayer.getPaused().then(paused => {
+        if (paused) activePlayer!.play()
+        else activePlayer!.pause()
       })
     }
   })
