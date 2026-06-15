@@ -81,7 +81,7 @@ function initHeroSlider(): void {
   window.addEventListener('message', e => {
     if (!activeIframe || e.source !== activeIframe.contentWindow) return
     try {
-      const data = JSON.parse(e.data as string)
+      const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
       if (data.event === 'timeupdate') setProgress(data.data?.percent ?? 0)
       if (data.event === 'durationchange') videoDuration = data.data?.duration ?? 0
     } catch {}
