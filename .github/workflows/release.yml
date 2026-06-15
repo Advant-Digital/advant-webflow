@@ -27,7 +27,7 @@ jobs:
           git commit -m "chore: add dist for ${{ github.ref_name }}"
           git tag -f ${{ github.ref_name }}
           git push origin ${{ github.ref_name }} --force
-          git push origin HEAD:refs/heads/main
+          git push origin HEAD:refs/heads/main --force
       - uses: softprops/action-gh-release@v2
         with:
           files: dist/*.js
