@@ -19,7 +19,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - name: Commit dist into tag
+      - name: Commit dist into tag and cdn branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -27,6 +27,7 @@ jobs:
           git commit -m "chore: add dist for ${{ github.ref_name }}"
           git tag -f ${{ github.ref_name }}
           git push origin ${{ github.ref_name }} --force
+          git push origin HEAD:refs/heads/cdn --force
       - uses: softprops/action-gh-release@v2
         with:
           files: dist/*.js
