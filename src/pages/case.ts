@@ -97,9 +97,7 @@ function initHeroSlider(): void {
     })
   }
 
-  splide.on('video:play', (player: Player) => {
-    activePlayer = player
-
+  splide.on('video:play', () => {
     const slide = getSlide(splide.index)
     slide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.display = 'none' })
 
@@ -115,7 +113,11 @@ function initHeroSlider(): void {
     el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'flex' })
     setPlayPauseIcon(true)
 
-    player.on('timeupdate', ({ percent }: { percent: number }) => setProgress(percent))
+    const iframe = getSlide(splide.index)?.querySelector<HTMLIFrameElement>('iframe[src*="vimeo"]')
+    if (iframe) {
+      activePlayer = new Player(iframe)
+      activePlayer.on('timeupdate', ({ percent }: { percent: number }) => setProgress(percent))
+    }
   })
 
   splide.on('video:pause', () => setPlayPauseIcon(false))
