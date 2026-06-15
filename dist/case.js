@@ -5440,10 +5440,10 @@
       video: {
         autoplay: false,
         mute: false,
+        hideControls: true,
         disableOverlayUI: true,
         playerOptions: {
           vimeo: {
-            controls: false,
             title: false,
             byline: false,
             portrait: false,
@@ -5458,8 +5458,7 @@
         bar.style.width = `${percent * 100}%`;
       });
     };
-    splide.on("video:play", (player) => {
-      activePlayer = player;
+    splide.on("video:play", (extPlayer) => {
       const slide = getSlide(splide.index);
       slide?.querySelectorAll("[data-video-thumb]").forEach((t) => {
         t.style.display = "none";
@@ -5482,7 +5481,11 @@
         c.style.display = "flex";
       });
       setPlayPauseIcon(true);
-      player.on("timeupdate", ({ percent }) => setProgress(percent));
+      const sdkPlayer = extPlayer?.player?.player;
+      if (sdkPlayer && sdkPlayer !== activePlayer) {
+        activePlayer = sdkPlayer;
+        activePlayer.on("timeupdate", ({ percent }) => setProgress(percent));
+      }
     });
     splide.on("video:pause", () => setPlayPauseIcon(false));
     splide.on("move", (_newIndex, prevIndex) => {
@@ -5502,30 +5505,36 @@
       const target = e.target;
       if (!activePlayer && (target.closest("[data-video-thumb]") || target.closest(".splide__video__play"))) {
         videoComponent()?.play();
-        return;
       }
-      if (target.closest("[data-video-play-pause]") && activePlayer) {
-        activePlayer.getPaused().then((paused) => {
-          if (paused) activePlayer.play();
-          else activePlayer.pause();
-        });
-        return;
-      }
-      if (target.closest("[data-video-mute]") && activePlayer) {
-        activePlayer.getMuted().then((muted) => {
-          activePlayer.setMuted(!muted);
-          setMuteIcon(!muted);
-        });
-        return;
-      }
-      const timeline = target.closest("[data-video-timeline]");
-      if (timeline && activePlayer) {
-        const rect2 = timeline.getBoundingClientRect();
-        const percent = Math.max(0, Math.min(1, (e.clientX - rect2.left) / rect2.width));
-        activePlayer.getDuration().then((duration) => {
-          activePlayer.setCurrentTime(percent * duration);
-        });
-      }
+    });
+    el.querySelectorAll(".hero-video-controls").forEach((controls) => {
+      controls.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!activePlayer) return;
+        const target = e.target;
+        if (target.closest("[data-video-mute]")) {
+          activePlayer.getMuted().then((muted) => {
+            activePlayer.setMuted(!muted);
+            setMuteIcon(!muted);
+          });
+          return;
+        }
+        const timeline = target.closest("[data-video-timeline]");
+        if (timeline) {
+          const rect2 = timeline.getBoundingClientRect();
+          const percent = Math.max(0, Math.min(1, (e.clientX - rect2.left) / rect2.width));
+          activePlayer.getDuration().then((duration) => {
+            activePlayer.setCurrentTime(percent * duration);
+          });
+          return;
+        }
+        if (target.closest("[data-video-play-pause]")) {
+          activePlayer.getPaused().then((paused) => {
+            if (paused) activePlayer.play();
+            else activePlayer.pause();
+          });
+        }
+      });
     });
     splide.mount({ Video });
     initControlIcons();
