@@ -42,12 +42,21 @@ function initHeroSlider(): void {
 
   let activePlayer: Player | null = null
 
+  const ICON_PLAY     = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#fff"><polygon points="5,3 19,12 5,21"/></svg>'
+  const ICON_PAUSE    = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>'
+  const ICON_FULLSCR  = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>'
+
   const setPlayPauseIcon = (playing: boolean) => {
     el.querySelectorAll<HTMLElement>('[data-video-play-pause]').forEach(btn => {
-      btn.innerHTML = playing
-        ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#fff"><polygon points="5,3 19,12 5,21"/></svg>'
+      btn.innerHTML = playing ? ICON_PAUSE : ICON_PLAY
     })
+  }
+
+  const initControlIcons = () => {
+    el.querySelectorAll<HTMLElement>('[data-video-fullscreen]').forEach(btn => {
+      btn.innerHTML = ICON_FULLSCR
+    })
+    setPlayPauseIcon(false)
   }
 
   const splide = new Splide(el, {
@@ -126,6 +135,7 @@ function initHeroSlider(): void {
   })
 
   splide.mount({ Video })
+  initControlIcons()
 }
 
 document.addEventListener('DOMContentLoaded', () => {
