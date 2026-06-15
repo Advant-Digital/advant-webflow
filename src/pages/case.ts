@@ -83,6 +83,12 @@ function initHeroSlider(): void {
   const getSlide = (index: number) =>
     el.querySelectorAll<HTMLElement>('.splide__slide')[index]
 
+  const setProgress = (percent: number) => {
+    el.querySelectorAll<HTMLElement>('[data-video-progress]').forEach(bar => {
+      bar.style.width = `${percent * 100}%`
+    })
+  }
+
   splide.on('video:play', (player: Player) => {
     activePlayer = player
 
@@ -100,6 +106,8 @@ function initHeroSlider(): void {
 
     el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'flex' })
     setPlayPauseIcon(true)
+
+    player.on('timeupdate', ({ percent }: { percent: number }) => setProgress(percent))
   })
 
   splide.on('video:pause', () => setPlayPauseIcon(false))
@@ -110,6 +118,7 @@ function initHeroSlider(): void {
     el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'none' })
     activePlayer = null
     setPlayPauseIcon(false)
+    setProgress(0)
   })
 
   const videoComponent = () => (splide.Components as any).Video
@@ -131,6 +140,15 @@ function initHeroSlider(): void {
 
     if (target.closest('[data-video-fullscreen]') && activePlayer) {
       activePlayer.requestFullscreen()
+    }
+
+    const timeline = target.closest<HTMLElement>('[data-video-timeline]')
+    if (timeline && activePlayer) {
+      const rect = timeline.getBoundingClientRect()
+      const percent = Math.max(0, Math.min(1, ((e as MouseEvent).clientX - rect.left) / rect.width))
+      activePlayer.getDuration().then(duration => {
+        activePlayer!.setCurrentTime(percent * duration)
+      })
     }
   })
 
