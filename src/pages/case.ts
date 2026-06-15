@@ -70,8 +70,8 @@ function initHeroSlider(): void {
   const splide = new Splide(el, {
     type: 'fade',
     rewind: true,
-    pagination: true,
-    arrows: true,
+    pagination: false,
+    arrows: false,
     video: {
       autoplay: false,
       mute: false,
