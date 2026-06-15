@@ -136,10 +136,14 @@ function initHeroSlider(): void {
         if (paused) activePlayer!.play()
         else activePlayer!.pause()
       })
+      return
     }
 
-    if (target.closest('[data-video-fullscreen]') && activePlayer) {
-      activePlayer.requestFullscreen()
+    if (target.closest('[data-video-fullscreen]')) {
+      const slide = getSlide(splide.index)
+      const container = slide?.querySelector<HTMLElement>('.splide__video') ?? el
+      container.requestFullscreen?.()
+      return
     }
 
     const timeline = target.closest<HTMLElement>('[data-video-timeline]')
