@@ -5404,7 +5404,8 @@
     .splide__video__wrapper iframe { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
     [data-video-thumb] { position: absolute; inset: 0; z-index: 15; }
     [data-video-thumb] .hero-play-btn { pointer-events: none; color: #000; }
-    [data-video-thumb] .hero-play-btn svg, [data-video-thumb] .hero-play-btn svg * { fill: #000 !important; }
+    [data-video-thumb] .hero-play-btn svg { fill: #000; width: 22px; height: 26px; }
+    [data-video-thumb] .hero-play-btn svg * { fill: #000; }
     [data-video-timeline] { position: relative; cursor: pointer; flex: 1; background: rgba(214, 242, 119, 0.25); }
     [data-video-progress] { position: absolute; top: 0; left: 0; height: 100%; width: 0%; pointer-events: none; background: #D6F277; }
     [data-video-play-pause], [data-video-mute] { display: flex; align-items: center; }
@@ -5419,6 +5420,7 @@
     let isPlaying = false;
     let isMuted = false;
     let videoDuration = 0;
+    const registeredSdkPlayers = /* @__PURE__ */ new WeakSet();
     const ICON_PLAY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#D6F277"><polygon points="5,3 19,12 5,21"/></svg>';
     const ICON_PAUSE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#D6F277"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>';
     const ICON_VOL = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#D6F277"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
@@ -5442,17 +5444,8 @@
       if (!activeIframe?.contentWindow) return;
       const payload = { method };
       if (value !== void 0) payload.value = value;
-      activeIframe.contentWindow.postMessage(JSON.stringify(payload), "https://player.vimeo.com");
+      activeIframe.contentWindow.postMessage(payload, "https://player.vimeo.com");
     };
-    window.addEventListener("message", (e) => {
-      if (!activeIframe || typeof e.origin !== "string" || !e.origin.includes("vimeo.com")) return;
-      try {
-        const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-        if (data.event === "timeupdate") setProgress(data.data?.percent ?? 0);
-        if (data.event === "durationchange") videoDuration = data.data?.duration ?? 0;
-      } catch {
-      }
-    });
     const splide = new Splide(el, {
       type: "fade",
       rewind: true,
@@ -5479,7 +5472,7 @@
         bar.style.width = `${percent * 100}%`;
       });
     };
-    splide.on("video:play", () => {
+    splide.on("video:play", (extPlayer) => {
       const slide = getSlide(splide.index);
       slide?.querySelectorAll("[data-video-thumb]").forEach((t) => {
         t.style.display = "none";
@@ -5504,10 +5497,16 @@
       isPlaying = true;
       setPlayPauseIcon(true);
       const iframe = slide?.querySelector("iframe");
-      if (iframe && iframe !== activeIframe) {
+      if (iframe) {
         activeIframe = iframe;
-        vimeoMsg("addEventListener", "timeupdate");
-        vimeoMsg("addEventListener", "durationchange");
+        const sdkPlayer = extPlayer?.player?.player;
+        if (sdkPlayer && typeof sdkPlayer.on === "function" && !registeredSdkPlayers.has(sdkPlayer)) {
+          registeredSdkPlayers.add(sdkPlayer);
+          sdkPlayer.on("timeupdate", ({ percent }) => setProgress(percent));
+          sdkPlayer.on("durationchange", ({ duration }) => {
+            videoDuration = duration;
+          });
+        }
       }
     });
     splide.on("video:pause", () => {
