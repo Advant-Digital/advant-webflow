@@ -49,6 +49,7 @@ function initHeroSlider(): void {
   let isPlaying = false
   let isMuted = false
   let videoDuration = 0
+  const registeredSdkPlayers = new WeakSet<object>()
 
   const ICON_PLAY   = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#D6F277"><polygon points="5,3 19,12 5,21"/></svg>'
   const ICON_PAUSE  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#D6F277"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>'
@@ -73,22 +74,13 @@ function initHeroSlider(): void {
     setProgress(0)
   }
 
-  // Send a postMessage to the active Vimeo iframe
+  // Send a postMessage to the active Vimeo iframe (plain object, not JSON string)
   const vimeoMsg = (method: string, value?: unknown) => {
     if (!activeIframe?.contentWindow) return
     const payload: Record<string, unknown> = { method }
     if (value !== undefined) payload.value = value
-    activeIframe.contentWindow.postMessage(JSON.stringify(payload), 'https://player.vimeo.com')
+    activeIframe.contentWindow.postMessage(payload, 'https://player.vimeo.com')
   }
-
-  window.addEventListener('message', e => {
-    if (!activeIframe || typeof e.origin !== 'string' || !e.origin.includes('vimeo.com')) return
-    try {
-      const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
-      if (data.event === 'timeupdate') setProgress(data.data?.percent ?? 0)
-      if (data.event === 'durationchange') videoDuration = data.data?.duration ?? 0
-    } catch {}
-  })
 
   const splide = new Splide(el, {
     type: 'fade',
@@ -120,7 +112,7 @@ function initHeroSlider(): void {
     })
   }
 
-  splide.on('video:play', () => {
+  splide.on('video:play', (extPlayer: any) => {
     const slide = getSlide(splide.index)
     slide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.display = 'none' })
 
@@ -138,10 +130,16 @@ function initHeroSlider(): void {
     setPlayPauseIcon(true)
 
     const iframe = slide?.querySelector<HTMLIFrameElement>('iframe')
-    if (iframe && iframe !== activeIframe) {
+    if (iframe) {
       activeIframe = iframe
-      vimeoMsg('addEventListener', 'timeupdate')
-      vimeoMsg('addEventListener', 'durationchange')
+      // Use the extension's bundled Vimeo SDK player for event registration so the
+      // correct player_id is included — raw postMessage without player_id is silently ignored.
+      const sdkPlayer = extPlayer?.player?.player
+      if (sdkPlayer && typeof sdkPlayer.on === 'function' && !registeredSdkPlayers.has(sdkPlayer)) {
+        registeredSdkPlayers.add(sdkPlayer)
+        sdkPlayer.on('timeupdate', ({ percent }: any) => setProgress(percent))
+        sdkPlayer.on('durationchange', ({ duration }: any) => { videoDuration = duration })
+      }
     }
   })
 
