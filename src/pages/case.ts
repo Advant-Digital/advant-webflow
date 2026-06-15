@@ -70,10 +70,15 @@ function initHeroSlider(): void {
     },
   })
 
+  const getSlide = (index: number) =>
+    el.querySelectorAll<HTMLElement>('.splide__slide')[index]
+
   splide.on('video:play', (player: Player) => {
     activePlayer = player
 
-    el.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(el => { el.style.display = 'none' })
+    const slide = getSlide(splide.index)
+    slide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.display = 'none' })
+
     el.querySelectorAll<HTMLElement>('.splide__video__wrapper').forEach(wrapper => {
       wrapper.style.width = '100%'
       wrapper.style.height = '100%'
@@ -88,6 +93,14 @@ function initHeroSlider(): void {
   })
 
   splide.on('video:pause', () => setPlayPauseIcon(false))
+
+  splide.on('move', (_newIndex: number, prevIndex: number) => {
+    const leavingSlide = getSlide(prevIndex)
+    leavingSlide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.display = '' })
+    el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'none' })
+    activePlayer = null
+    setPlayPauseIcon(false)
+  })
 
   const videoComponent = () => (splide.Components as any).Video
 
