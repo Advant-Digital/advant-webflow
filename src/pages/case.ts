@@ -97,7 +97,7 @@ function initHeroSlider(): void {
     })
   }
 
-  splide.on('video:play', () => {
+  splide.on('video:play', (extPlayer: any) => {
     const slide = getSlide(splide.index)
     slide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.display = 'none' })
 
@@ -113,9 +113,10 @@ function initHeroSlider(): void {
     el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'flex' })
     setPlayPauseIcon(true)
 
-    const sdkPlayer = (splide.Components as any).Video?.players?.[splide.index]?.player?.player
+    // extPlayer is the extension's Player wrapper; .player = VimeoPlayer; .player.player = Vimeo SDK Player
+    const sdkPlayer = extPlayer?.player?.player
     if (sdkPlayer) {
-      activePlayer = sdkPlayer as Player
+      activePlayer = sdkPlayer as unknown as Player
       activePlayer.on('timeupdate', ({ percent }: { percent: number }) => setProgress(percent))
     }
   })
