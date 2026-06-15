@@ -78,7 +78,7 @@ function initHeroSlider(): void {
       disableOverlayUI: true,
       playerOptions: {
         vimeo: {
-          controls: false,
+
           title: false,
           byline: false,
           portrait: false,
