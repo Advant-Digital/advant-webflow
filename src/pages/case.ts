@@ -1,6 +1,5 @@
 import Splide from '@splidejs/splide'
 import { Video } from '@splidejs/splide-extension-video'
-import Player from '@vimeo/player'
 
 function initHeroHeading(): void {
   const heading = document.querySelector<HTMLElement>('[data-case-hero-heading]')
@@ -42,7 +41,10 @@ function initHeroSlider(): void {
   const el = document.querySelector<HTMLElement>('[data-hero-slider]')
   if (!el) return
 
-  let activePlayer: Player | null = null
+  let activeIframe: HTMLIFrameElement | null = null
+  let isPlaying = false
+  let isMuted = false
+  let videoDuration = 0
 
   const ICON_PLAY   = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#fff"><polygon points="5,3 19,12 5,21"/></svg>'
   const ICON_PAUSE  = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>'
@@ -66,6 +68,24 @@ function initHeroSlider(): void {
     setMuteIcon(false)
     setProgress(0)
   }
+
+  // Send a postMessage to the active Vimeo iframe
+  const vimeoMsg = (method: string, value?: unknown) => {
+    if (!activeIframe?.contentWindow) return
+    const payload: Record<string, unknown> = { method }
+    if (value !== undefined) payload.value = value
+    activeIframe.contentWindow.postMessage(JSON.stringify(payload), 'https://player.vimeo.com')
+  }
+
+  // Receive Vimeo postMessages for timeupdate and durationchange
+  window.addEventListener('message', e => {
+    if (!activeIframe || e.source !== activeIframe.contentWindow) return
+    try {
+      const data = JSON.parse(e.data as string)
+      if (data.event === 'timeupdate') setProgress(data.data?.percent ?? 0)
+      if (data.event === 'durationchange') videoDuration = data.data?.duration ?? 0
+    } catch {}
+  })
 
   const splide = new Splide(el, {
     type: 'fade',
@@ -97,7 +117,7 @@ function initHeroSlider(): void {
     })
   }
 
-  splide.on('video:play', (extPlayer: any) => {
+  splide.on('video:play', () => {
     const slide = getSlide(splide.index)
     slide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.display = 'none' })
 
@@ -111,23 +131,30 @@ function initHeroSlider(): void {
     })
 
     el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'flex' })
+    isPlaying = true
     setPlayPauseIcon(true)
 
-    // extPlayer is the extension's Player wrapper; .player = VimeoPlayer; .player.player = Vimeo SDK Player
-    const sdkPlayer = extPlayer?.player?.player
-    if (sdkPlayer && sdkPlayer !== activePlayer) {
-      activePlayer = sdkPlayer as unknown as Player
-      activePlayer.on('timeupdate', ({ percent }: { percent: number }) => setProgress(percent))
+    const iframe = slide?.querySelector<HTMLIFrameElement>('iframe')
+    if (iframe && iframe !== activeIframe) {
+      activeIframe = iframe
+      vimeoMsg('addEventListener', 'timeupdate')
+      vimeoMsg('addEventListener', 'durationchange')
     }
   })
 
-  splide.on('video:pause', () => setPlayPauseIcon(false))
+  splide.on('video:pause', () => {
+    isPlaying = false
+    setPlayPauseIcon(false)
+  })
 
   splide.on('move', (_newIndex: number, prevIndex: number) => {
     const leavingSlide = getSlide(prevIndex)
     leavingSlide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.display = '' })
     el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'none' })
-    activePlayer = null
+    activeIframe = null
+    isPlaying = false
+    isMuted = false
+    videoDuration = 0
     setPlayPauseIcon(false)
     setProgress(0)
   })
@@ -137,24 +164,22 @@ function initHeroSlider(): void {
   // Thumbnail / overlay → start video
   el.addEventListener('click', e => {
     const target = e.target as HTMLElement
-    if (!activePlayer && (target.closest('[data-video-thumb]') || target.closest('.splide__video__play'))) {
+    if (!isPlaying && (target.closest('[data-video-thumb]') || target.closest('.splide__video__play'))) {
       videoComponent()?.play()
     }
   })
 
-  // Custom controls: stop propagation so PlayerUI's slide-level click handler
-  // (which toggles play/pause on any slide click) doesn't fire for our buttons.
+  // Custom controls: stopPropagation prevents PlayerUI's slide-level click from toggling play/pause
   el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(controls => {
     controls.addEventListener('click', e => {
       e.stopPropagation()
-      if (!activePlayer) return
+      if (!activeIframe) return
       const target = e.target as HTMLElement
 
       if (target.closest('[data-video-mute]')) {
-        activePlayer.getMuted().then(muted => {
-          activePlayer!.setMuted(!muted)
-          setMuteIcon(!muted)
-        })
+        isMuted = !isMuted
+        vimeoMsg('setMuted', isMuted)
+        setMuteIcon(isMuted)
         return
       }
 
@@ -162,17 +187,13 @@ function initHeroSlider(): void {
       if (timeline) {
         const rect = timeline.getBoundingClientRect()
         const percent = Math.max(0, Math.min(1, ((e as MouseEvent).clientX - rect.left) / rect.width))
-        activePlayer.getDuration().then(duration => {
-          activePlayer!.setCurrentTime(percent * duration)
-        })
+        vimeoMsg('setCurrentTime', percent * videoDuration)
         return
       }
 
       if (target.closest('[data-video-play-pause]')) {
-        activePlayer.getPaused().then(paused => {
-          if (paused) activePlayer!.play()
-          else activePlayer!.pause()
-        })
+        if (isPlaying) videoComponent()?.pause()
+        else videoComponent()?.play()
       }
     })
   })
