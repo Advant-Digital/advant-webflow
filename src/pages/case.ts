@@ -31,7 +31,8 @@ function injectSliderStyles(): void {
     .splide__video__wrapper iframe { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
     [data-video-thumb] { position: absolute; inset: 0; z-index: 15; }
     [data-video-thumb] .hero-play-btn { pointer-events: none; color: #000; }
-    [data-video-thumb] .hero-play-btn svg, [data-video-thumb] .hero-play-btn svg * { fill: #000 !important; }
+    [data-video-thumb] .hero-play-btn svg { fill: #000; width: 22px; height: 26px; }
+    [data-video-thumb] .hero-play-btn svg * { fill: #000; }
     [data-video-timeline] { position: relative; cursor: pointer; flex: 1; background: rgba(214, 242, 119, 0.25); }
     [data-video-progress] { position: absolute; top: 0; left: 0; height: 100%; width: 0%; pointer-events: none; background: #D6F277; }
     [data-video-play-pause], [data-video-mute] { display: flex; align-items: center; }
