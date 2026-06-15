@@ -30,7 +30,7 @@ function injectSliderStyles(): void {
     .splide__video__wrapper,
     .splide__video__wrapper > div { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
     .splide__video__wrapper iframe { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
-    .hero-play-btn { pointer-events: none; }
+    [data-video-thumb] .hero-play-btn { pointer-events: none; }
   `
   document.head.appendChild(style)
 }
