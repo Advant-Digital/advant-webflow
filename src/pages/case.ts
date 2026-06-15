@@ -113,9 +113,9 @@ function initHeroSlider(): void {
     el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'flex' })
     setPlayPauseIcon(true)
 
-    const iframe = getSlide(splide.index)?.querySelector<HTMLIFrameElement>('iframe[src*="vimeo"]')
-    if (iframe) {
-      activePlayer = new Player(iframe)
+    const sdkPlayer = (splide.Components as any).Video?.players?.[splide.index]?.player?.player
+    if (sdkPlayer) {
+      activePlayer = sdkPlayer as Player
       activePlayer.on('timeupdate', ({ percent }: { percent: number }) => setProgress(percent))
     }
   })
