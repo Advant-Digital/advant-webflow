@@ -113,7 +113,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
       if (iframe) { iframe.style.width = '100%'; iframe.style.height = '100%' }
     })
 
-    document.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'flex' })
+    el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'flex' })
     isPlaying = true
     setPlayPauseIcon(true)
 
@@ -145,7 +145,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
   splide.on('move', (_newIndex: number, prevIndex: number) => {
     const leavingSlide = getSlide(prevIndex)
     leavingSlide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.opacity = '' })
-    document.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'none' })
+    el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'none' })
     activeIframe = null
     activeSdkPlayer = null
     isPlaying = false
@@ -162,6 +162,10 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
 
   const videoComponent = () => (splide.Components as any).Video
 
+  document.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(controls => {
+    el.appendChild(controls)
+  })
+
   el.addEventListener('click', e => {
     const target = e.target as HTMLElement
     if (!target.closest('[data-video-thumb]') && !target.closest('.splide__video__play')) return
@@ -169,7 +173,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
     else videoComponent()?.play()
   })
 
-  document.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(controls => {
+  el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(controls => {
     controls.addEventListener('click', e => {
       e.stopPropagation()
       if (!activeIframe) return
