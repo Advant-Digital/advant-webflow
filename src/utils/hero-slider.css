@@ -4,7 +4,7 @@
 .splide__video__wrapper > div { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block !important; }
 .splide__video__wrapper iframe { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
 [data-video-thumb] { position: absolute; inset: 0; z-index: 15; cursor: pointer; }
-.hero-video-controls { position: absolute; bottom: 0; left: 0; right: 0; z-index: 20; display: none; }
+.hero-video-controls { position: absolute !important; bottom: 0; left: 0; right: 0; z-index: 20; display: none; }
 [data-video-thumb] .hero-play-btn { pointer-events: none; color: #000; }
 [data-video-thumb] .hero-play-btn svg { fill: #000; width: 22px; height: 26px; }
 [data-video-thumb] .hero-play-btn svg * { fill: #000; }
