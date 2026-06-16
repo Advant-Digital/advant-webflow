@@ -1,5 +1,6 @@
 import Splide from '@splidejs/splide'
 import { Video } from '@splidejs/splide-extension-video'
+import splideCss from '@splidejs/splide/dist/css/splide-core.min.css'
 import css from './hero-slider.css'
 
 let stylesInjected = false
@@ -8,7 +9,7 @@ export function injectHeroSliderStyles(): void {
   if (stylesInjected) return
   stylesInjected = true
   const style = document.createElement('style')
-  style.textContent = css
+  style.textContent = splideCss + css
   document.head.appendChild(style)
 }
 
