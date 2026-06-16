@@ -23,6 +23,7 @@ Promise.all(
       format: 'iife',
       bundle: true,
       minify: false,
+      loader: { '.css': 'text' },
     })
   )
 )

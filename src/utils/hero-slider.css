@@ -1,0 +1,14 @@
+.splide__slide { overflow: hidden; }
+.splide__video { position: absolute; inset: 0; z-index: 1; display: block !important; }
+.splide__video__wrapper,
+.splide__video__wrapper > div { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block !important; }
+.splide__video__wrapper iframe { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+[data-video-thumb] { position: absolute; inset: 0; z-index: 15; }
+[data-video-thumb] .hero-play-btn { pointer-events: none; color: #000; }
+[data-video-thumb] .hero-play-btn svg { fill: #000; width: 22px; height: 26px; }
+[data-video-thumb] .hero-play-btn svg * { fill: #000; }
+[data-video-timeline] { position: relative; cursor: pointer; flex: 1; background: rgba(214, 242, 119, 0.25); }
+[data-video-progress] { position: absolute; top: 0; left: 0; height: 100%; width: 0%; pointer-events: none; background: #D6F277; }
+[data-video-play-pause], [data-video-mute] { display: flex; align-items: center; }
+[data-video-mute] { aspect-ratio: 1; width: 40px; height: 40px; cursor: pointer; }
+[data-video-play-pause] svg, [data-video-mute] svg { display: block; height: 100%; width: auto; aspect-ratio: 1; }
