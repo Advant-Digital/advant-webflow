@@ -12,6 +12,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -19,14 +21,12 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - name: Commit dist into tag and cdn branch
+      - name: Push dist to cdn branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -f dist/
-          git commit -m "chore: add dist for ${{ github.ref_name }}"
-          git tag -f ${{ github.ref_name }}
-          git push origin ${{ github.ref_name }} --force
+          git commit -m "chore: dist for ${{ github.ref_name }}"
           git push origin HEAD:refs/heads/cdn --force
       - uses: softprops/action-gh-release@v2
         with:
