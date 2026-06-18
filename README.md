@@ -1,81 +1,81 @@
 # advant-webflow
 
-Custom JavaScript for the Advant website, built with TypeScript and bundled as IIFE scripts for Webflow.
-
-## Overview
-
-The Advant website runs on Webflow. This repo contains all custom behaviour that goes beyond what Webflow supports natively — page-specific scripts, shared utilities, and the release pipeline that makes them available to the live site.
-
-**Two parallel layers:**
-
-| Layer | Responsibility |
-|---|---|
-| This repo | Custom JS/TS logic, tests, CI/CD |
-| Webflow Designer + MCP | Site structure, CMS, components, styles |
+Custom JavaScript for the [Advant](https://advant.se) website. TypeScript source, bundled as IIFE scripts and served via jsDelivr CDN to a Webflow-hosted site.
 
 ## Architecture
 
-Each page gets its own entry point, built as an IIFE (Immediately Invoked Function Expression) so it runs as a plain `<script>` embed in Webflow without a module loader.
+The site runs on Webflow. This repo handles all custom behaviour that goes beyond what Webflow supports natively.
 
 ```
 src/
-  global/index.ts     # Loaded on every page
+  global/index.ts     # Runs on every page
   pages/case.ts       # Case page interactions
-  utils/cms.ts        # Shared utilities (unit tested)
-build.js              # esbuild script → dist/*.js (IIFE format)
-vite.config.ts        # Vitest test runner config only
+  utils/
+    hero-slider.ts    # Splide video slider with custom controls
+    cms.ts            # Shared CMS utilities (unit tested)
+build.js              # esbuild → dist/*.js (IIFE format)
 ```
 
-> Vite/Rollup 4 cannot produce IIFE format with multiple entry points, so esbuild handles building while Vite is retained as the Vitest test runner.
+Each entry point is compiled to a self-contained IIFE so it loads as a plain `<script>` tag in Webflow with no module loader required.
 
-## Getting Started
+> esbuild handles the IIFE builds; Vite is kept solely as the Vitest test runner since Rollup 4 cannot produce IIFE format with multiple entry points.
+
+## Setup
 
 ```bash
 npm install
-npm run build     # type-check + build to dist/
-npm test          # run unit tests
+npm run build   # type-check + bundle to dist/
+npm test        # unit tests
 ```
 
-## Development
+## Adding a page script
 
-Add new page scripts under `src/pages/`. Register the entry point in `build.js`:
+1. Create `src/pages/your-page.ts`
+2. Register the entry point in `build.js`:
 
 ```js
-await esbuild.build({
-  entryPoints: ['src/pages/your-page.ts'],
-  outfile: 'dist/your-page.js',
-  format: 'iife',
-  bundle: true,
-})
+const entries = {
+  global: 'src/global/index.ts',
+  case:   'src/pages/case.ts',
+  'your-page': 'src/pages/your-page.ts',  // add here
+}
 ```
 
-Scripts target Webflow elements via `data-*` attributes set in the Designer — never by class name, which Webflow can regenerate.
+3. Add the output URL as a `<script>` tag in the Webflow page's custom code settings.
+
+## Webflow integration
+
+Scripts target elements via `data-*` attributes set in Webflow Designer — never by generated class names.
 
 | Attribute | Element |
 |---|---|
+| `data-hero-slider` | Hero slideshow root |
+| `data-video-thumb` | Slide thumbnail overlay |
+| `data-video-play-pause` | Play/pause button |
+| `data-video-mute` | Mute button |
+| `data-video-subtitle` | Subtitle toggle button |
+| `data-video-timeline` | Scrubber track |
+| `data-video-progress` | Scrubber fill |
 | `data-case-name` | Case title (H1 fallback source) |
 | `data-case-hero-heading` | Hero H1 |
 | `data-results-btn` | "See results" anchor in hero |
 | `data-tag-link` | Tag pill anchor |
 | `data-tag-slug` | Tag slug on tag pill anchor |
 
-## Releasing
+## Releases
 
-Tag a commit and push — GitHub Actions runs tests, builds, and attaches the `dist/*.js` files to a GitHub Release. jsDelivr serves them automatically:
+Tag a commit and push. GitHub Actions runs tests, builds, and publishes a GitHub Release with the dist files attached. jsDelivr serves them immediately:
 
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-Scripts are then available at:
+The built files are available at:
+
 ```
 https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@v1.0.0/dist/case.js
+https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@v1.0.0/dist/global.js
 ```
 
-Add this URL as a `<script>` tag in the Webflow page's custom code settings.
-
-## CMS Structure
-
-The Webflow CMS is designed around the Case content type with 11 collections. Full specification:
-[`docs/superpowers/specs/2026-06-12-webflow-cms-case-structure-design.md`](docs/superpowers/specs/2026-06-12-webflow-cms-case-structure-design.md)
+The `cdn` branch always tracks the latest release and can be referenced as `@cdn` instead of a pinned version.
