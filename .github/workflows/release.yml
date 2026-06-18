@@ -23,6 +23,36 @@ jobs:
       - run: npm run build
       - name: Push to cdn branch
         run: git push origin HEAD:refs/heads/cdn --force
+      - name: Update Webflow scripts
+        env:
+          WEBFLOW_API_TOKEN: ${{ secrets.WEBFLOW_API_TOKEN }}
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          SITE_ID="69bbcdf7631ba7af933392e6"
+          CASE_PAGE_ID="6a2bc31525634ed453810d0c"
+
+          CASE_HASH="sha256-$(openssl dgst -sha256 -binary dist/case.js | base64 -w0)"
+          GLOBAL_HASH="sha256-$(openssl dgst -sha256 -binary dist/global.js | base64 -w0)"
+
+          curl -sf -X PATCH "https://api.webflow.com/v2/sites/$SITE_ID/registered_scripts/case_script" \
+            -H "Authorization: Bearer $WEBFLOW_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"hostedLocation\":\"https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@${GITHUB_REF_NAME}/dist/case.js\",\"integrityHash\":\"$CASE_HASH\",\"version\":\"$VERSION\"}"
+
+          curl -sf -X PATCH "https://api.webflow.com/v2/sites/$SITE_ID/registered_scripts/global_script" \
+            -H "Authorization: Bearer $WEBFLOW_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"hostedLocation\":\"https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@${GITHUB_REF_NAME}/dist/global.js\",\"integrityHash\":\"$GLOBAL_HASH\",\"version\":\"$VERSION\"}"
+
+          curl -sf -X PUT "https://api.webflow.com/v2/sites/$SITE_ID/custom_code" \
+            -H "Authorization: Bearer $WEBFLOW_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"scripts\":[{\"id\":\"global_script\",\"location\":\"footer\",\"version\":\"$VERSION\"}]}"
+
+          curl -sf -X PUT "https://api.webflow.com/v2/pages/$CASE_PAGE_ID/custom_code" \
+            -H "Authorization: Bearer $WEBFLOW_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"scripts\":[{\"id\":\"case_script\",\"location\":\"footer\",\"version\":\"$VERSION\"}]}"
       - uses: softprops/action-gh-release@v2
         with:
           files: dist/*.js
