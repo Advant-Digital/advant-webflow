@@ -5380,7 +5380,7 @@
   var splide_core_min_default = "@keyframes splide-loading{0%{transform:rotate(0)}to{transform:rotate(1turn)}}.splide__track--draggable{-webkit-touch-callout:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}.splide__track--fade>.splide__list>.splide__slide{margin:0!important;opacity:0;z-index:0}.splide__track--fade>.splide__list>.splide__slide.is-active{opacity:1;z-index:1}.splide--rtl{direction:rtl}.splide__track--ttb>.splide__list{display:block}.splide__container{box-sizing:border-box;position:relative}.splide__list{backface-visibility:hidden;display:-ms-flexbox;display:flex;height:100%;margin:0!important;padding:0!important}.splide.is-initialized:not(.is-active) .splide__list{display:block}.splide__pagination{-ms-flex-align:center;align-items:center;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;-ms-flex-pack:center;justify-content:center;margin:0;pointer-events:none}.splide__pagination li{display:inline-block;line-height:1;list-style-type:none;margin:0;pointer-events:auto}.splide:not(.is-overflow) .splide__pagination{display:none}.splide__progress__bar{width:0}.splide{position:relative;visibility:hidden}.splide.is-initialized,.splide.is-rendered{visibility:visible}.splide__slide{backface-visibility:hidden;box-sizing:border-box;-ms-flex-negative:0;flex-shrink:0;list-style-type:none!important;margin:0;position:relative}.splide__slide img{vertical-align:bottom}.splide__spinner{animation:splide-loading 1s linear infinite;border:2px solid #999;border-left-color:transparent;border-radius:50%;bottom:0;contain:strict;display:inline-block;height:20px;left:0;margin:auto;position:absolute;right:0;top:0;width:20px}.splide__sr{clip:rect(0 0 0 0);border:0;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}.splide__toggle.is-active .splide__toggle__play,.splide__toggle__pause{display:none}.splide__toggle.is-active .splide__toggle__pause{display:inline}.splide__track{overflow:hidden;position:relative;z-index:0}";
 
   // src/utils/hero-slider.css
-  var hero_slider_default = ".splide__slide { overflow: hidden; }\n.splide__video { position: absolute; inset: 0; z-index: 1; display: block !important; }\n.splide__video__wrapper,\n.splide__video__wrapper > div { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block !important; }\n.splide__video__wrapper iframe { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }\n[data-video-thumb] { position: absolute; inset: 0; z-index: 15; cursor: pointer; }\n.hero-video-controls { position: absolute !important; bottom: 0; left: 0; right: 0; z-index: 20; display: none; }\n[data-video-thumb] .hero-play-btn { pointer-events: none; color: #000; }\n[data-video-thumb] .hero-play-btn svg { fill: #000; width: 22px; height: 26px; }\n[data-video-thumb] .hero-play-btn svg * { fill: #000; }\n[data-video-timeline] { position: relative; cursor: pointer; flex: 1; background: rgba(214, 242, 119, 0.25); }\n[data-video-progress] { position: absolute; top: 0; left: 0; height: 100%; width: 0%; pointer-events: none; background: #D6F277; }\n[data-video-play-pause], [data-video-mute] { display: flex; align-items: center; }\n[data-video-mute] { aspect-ratio: 1; width: 40px; height: 40px; cursor: pointer; }\n[data-video-subtitle] { display: flex; align-items: center; width: 40px; height: 40px; cursor: pointer; }\n[data-video-subtitle] svg { display: block; height: 100%; width: auto; aspect-ratio: 1; }\n[data-video-play-pause] svg, [data-video-mute] svg { display: block; height: 100%; width: auto; aspect-ratio: 1; }\n";
+  var hero_slider_default = ".splide__slide { overflow: hidden; }\n[data-slide-progress-bar] { position: absolute; top: 0; left: 0; height: 3px; width: 0%; background: #D6F277; z-index: 30; pointer-events: none; transition: opacity 0.3s; }\n.splide__video { position: absolute; inset: 0; z-index: 1; display: block !important; }\n.splide__video__wrapper,\n.splide__video__wrapper > div { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block !important; }\n.splide__video__wrapper iframe { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }\n[data-video-thumb] { position: absolute; inset: 0; z-index: 15; cursor: pointer; }\n.hero-video-controls { position: absolute !important; bottom: 0; left: 0; right: 0; z-index: 20; display: none; }\n[data-video-thumb] .hero-play-btn { pointer-events: none; color: #000; }\n[data-video-thumb] .hero-play-btn svg { fill: #000; width: 22px; height: 26px; }\n[data-video-thumb] .hero-play-btn svg * { fill: #000; }\n[data-video-timeline] { position: relative; cursor: pointer; flex: 1; background: rgba(214, 242, 119, 0.25); }\n[data-video-progress] { position: absolute; top: 0; left: 0; height: 100%; width: 0%; pointer-events: none; background: #D6F277; }\n[data-video-play-pause], [data-video-mute] { display: flex; align-items: center; }\n[data-video-mute] { aspect-ratio: 1; width: 40px; height: 40px; cursor: pointer; }\n[data-video-subtitle] { display: flex; align-items: center; width: 40px; height: 40px; cursor: pointer; }\n[data-video-subtitle] svg { display: block; height: 100%; width: auto; aspect-ratio: 1; }\n[data-video-play-pause] svg, [data-video-mute] svg { display: block; height: 100%; width: auto; aspect-ratio: 1; }\n";
 
   // src/utils/hero-slider.ts
   var stylesInjected = false;
@@ -5447,6 +5447,10 @@
       rewind: true,
       pagination: false,
       arrows: false,
+      autoplay: true,
+      interval: 6e3,
+      pauseOnHover: true,
+      resetProgress: false,
       video: {
         autoplay: false,
         mute: false,
@@ -5485,6 +5489,8 @@
       el.querySelectorAll(".hero-video-controls").forEach((c) => {
         c.style.display = "flex";
       });
+      splide.Components.Autoplay?.pause();
+      progressBar.style.opacity = "0";
       isPlaying = true;
       setPlayPauseIcon(true);
       const iframe = slide?.querySelector("iframe");
@@ -5511,6 +5517,8 @@
     splide.on("video:pause", () => {
       isPlaying = false;
       setPlayPauseIcon(false);
+      splide.Components.Autoplay?.play();
+      progressBar.style.opacity = "";
     });
     splide.on("move", (_newIndex, prevIndex) => {
       const leavingSlide = getSlide(prevIndex);
@@ -5532,11 +5540,15 @@
       setSubtitleIcon(false);
       setSubtitleAvailable(false);
       setProgress(0);
+      progressBar.style.width = "0%";
     });
     const videoComponent = () => splide.Components.Video;
     document.querySelectorAll(".hero-video-controls").forEach((controls) => {
       el.appendChild(controls);
     });
+    const progressBar = document.createElement("div");
+    progressBar.setAttribute("data-slide-progress-bar", "");
+    el.appendChild(progressBar);
     el.addEventListener("click", (e) => {
       const target = e.target;
       if (!target.closest("[data-video-thumb]") && !target.closest(".splide__video__play")) return;
@@ -5573,6 +5585,9 @@
           else videoComponent()?.play();
         }
       });
+    });
+    splide.on("autoplay:playing", (rate) => {
+      progressBar.style.width = `${rate * 100}%`;
     });
     setPlayPauseIcon(false);
     setMuteIcon(false);

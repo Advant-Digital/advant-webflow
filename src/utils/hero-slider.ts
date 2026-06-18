@@ -81,6 +81,10 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
     rewind: true,
     pagination: false,
     arrows: false,
+    autoplay: true,
+    interval: 6000,
+    pauseOnHover: true,
+    resetProgress: false,
     video: {
       autoplay: false,
       mute: false,
@@ -114,6 +118,8 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
     })
 
     el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'flex' })
+    ;(splide.Components as any).Autoplay?.pause()
+    progressBar.style.opacity = '0'
     isPlaying = true
     setPlayPauseIcon(true)
 
@@ -140,6 +146,8 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
   splide.on('video:pause', () => {
     isPlaying = false
     setPlayPauseIcon(false)
+    ;(splide.Components as any).Autoplay?.play()
+    progressBar.style.opacity = ''
   })
 
   splide.on('move', (_newIndex: number, prevIndex: number) => {
@@ -158,6 +166,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
     setSubtitleIcon(false)
     setSubtitleAvailable(false)
     setProgress(0)
+    progressBar.style.width = '0%'
   })
 
   const videoComponent = () => (splide.Components as any).Video
@@ -165,6 +174,10 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
   document.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(controls => {
     el.appendChild(controls)
   })
+
+  const progressBar = document.createElement('div')
+  progressBar.setAttribute('data-slide-progress-bar', '')
+  el.appendChild(progressBar)
 
   el.addEventListener('click', e => {
     const target = e.target as HTMLElement
@@ -207,6 +220,10 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
         else videoComponent()?.play()
       }
     })
+  })
+
+  splide.on('autoplay:playing', (rate: number) => {
+    progressBar.style.width = `${rate * 100}%`
   })
 
   setPlayPauseIcon(false)
