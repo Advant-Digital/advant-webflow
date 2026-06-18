@@ -24,6 +24,7 @@ jobs:
       - name: Push to cdn branch
         run: git push origin HEAD:refs/heads/cdn --force
       - name: Update Webflow scripts
+        continue-on-error: true
         env:
           WEBFLOW_API_TOKEN: ${{ secrets.WEBFLOW_API_TOKEN }}
         run: |
