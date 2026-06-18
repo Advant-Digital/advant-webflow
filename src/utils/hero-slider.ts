@@ -77,12 +77,12 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
   }
 
   const splide = new Splide(el, {
-    type: 'fade',
+    type: 'slide',
     rewind: true,
     pagination: false,
     arrows: false,
     autoplay: true,
-    interval: 6000,
+    interval: 9000,
     pauseOnHover: true,
     resetProgress: false,
     video: {

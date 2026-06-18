@@ -5443,12 +5443,12 @@
       activeIframe.contentWindow.postMessage(payload, "https://player.vimeo.com");
     };
     const splide = new Splide(el, {
-      type: "fade",
+      type: "slide",
       rewind: true,
       pagination: false,
       arrows: false,
       autoplay: true,
-      interval: 6e3,
+      interval: 9e3,
       pauseOnHover: true,
       resetProgress: false,
       video: {
