@@ -2432,7 +2432,7 @@
       cancel
     };
   }
-  var _Splide = /* @__PURE__ */ function() {
+  var _Splide = /* @__PURE__ */ (function() {
     function _Splide2(target, options) {
       this.event = EventInterface();
       this.Components = {};
@@ -2564,7 +2564,7 @@
       }
     }]);
     return _Splide2;
-  }();
+  })();
   var Splide = _Splide;
   Splide.defaults = {};
   Splide.STATES = STATES;
@@ -3123,14 +3123,14 @@
       return;
     }
     var hasOwnProperty = Object.prototype.hasOwnProperty;
-    var hasDefine = Object.defineProperty && function() {
+    var hasDefine = Object.defineProperty && (function() {
       try {
         return Object.defineProperty({}, "x", {
           value: 1
         }).x === 1;
       } catch (e) {
       }
-    }();
+    })();
     var defineProperty = function(object, name, value) {
       if (hasDefine) {
         Object.defineProperty(object, name, {
@@ -3142,7 +3142,7 @@
         object[name] = value;
       }
     };
-    self2.WeakMap = function() {
+    self2.WeakMap = (function() {
       function WeakMap2() {
         if (this === void 0) {
           throw new TypeError("Constructor WeakMap requires 'new'");
@@ -3212,7 +3212,7 @@
       }
       defineProperty(WeakMap2, "_polyfill", true);
       return WeakMap2;
-    }();
+    })();
     function isObject3(x) {
       return Object(x) === x;
     }
@@ -3242,7 +3242,7 @@
           return obj;
         };
       }
-      scheduling_queue = /* @__PURE__ */ function Queue() {
+      scheduling_queue = /* @__PURE__ */ (function Queue() {
         var first, last, item;
         function Item(fn, self2) {
           this.fn = fn;
@@ -3269,7 +3269,7 @@
             }
           }
         };
-      }();
+      })();
       function schedule(fn, self2) {
         scheduling_queue.add(fn, self2);
         if (!cycle) {
@@ -3742,7 +3742,7 @@
     window.addEventListener("message", onMessage);
   }
   function initializeScreenfull() {
-    var fn = function() {
+    var fn = (function() {
       var val;
       var fnMap = [
         ["requestFullscreen", "exitFullscreen", "fullscreenElement", "fullscreenEnabled", "fullscreenchange", "fullscreenerror"],
@@ -3766,7 +3766,7 @@
         }
       }
       return false;
-    }();
+    })();
     var eventNameMap = {
       fullscreenchange: fn.fullscreenchange,
       fullscreenerror: fn.fullscreenerror
@@ -3840,7 +3840,7 @@
   var playerMap = /* @__PURE__ */ new WeakMap();
   var readyMap = /* @__PURE__ */ new WeakMap();
   var screenfull = {};
-  var Player$1 = /* @__PURE__ */ function() {
+  var Player$1 = /* @__PURE__ */ (function() {
     function Player2(element) {
       var _this = this;
       var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -5009,7 +5009,7 @@
       }
     }]);
     return Player2;
-  }();
+  })();
   if (!isNode) {
     screenfull = initializeScreenfull();
     initializeEmbeds();
