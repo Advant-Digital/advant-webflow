@@ -29,6 +29,7 @@ jobs:
           WEBFLOW_API_TOKEN: ${{ secrets.WEBFLOW_API_TOKEN }}
         run: |
           VERSION=${GITHUB_REF_NAME#v}
+          VERSION_NODOTS=$(echo "$VERSION" | tr -d '.')
           SITE_ID="69bbcdf7631ba7af933392e6"
           CASE_PAGE_ID="6a2bc31525634ed453810d0c"
 
@@ -37,7 +38,7 @@ jobs:
 
           wf_curl() {
             local METHOD=$1 URL=$2 BODY=$3
-            local OUT STATUS
+            local OUT STATUS BODY_OUT
             OUT=$(curl -s -w "\n%{http_code}" -X "$METHOD" "$URL" \
               -H "Authorization: Bearer $WEBFLOW_API_TOKEN" \
               -H "Content-Type: application/json" \
@@ -49,19 +50,26 @@ jobs:
               echo "Error response: $BODY_OUT"
               exit 1
             fi
+            echo "$BODY_OUT"
           }
 
-          wf_curl PATCH "https://api.webflow.com/v2/sites/$SITE_ID/registered_scripts/case_script" \
-            "{\"hostedLocation\":\"https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@${GITHUB_REF_NAME}/dist/case.js\",\"integrityHash\":\"$CASE_HASH\",\"version\":\"$VERSION\"}"
+          # Register new scripts for this version and capture the IDs Webflow assigns
+          CASE_REG=$(wf_curl POST "https://api.webflow.com/v2/sites/$SITE_ID/registered_scripts" \
+            "{\"type\":\"hosted\",\"displayName\":\"Case Script v${VERSION_NODOTS}\",\"hostedLocation\":\"https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@${GITHUB_REF_NAME}/dist/case.js\",\"integrityHash\":\"$CASE_HASH\",\"version\":\"$VERSION\"}")
+          CASE_SCRIPT_ID=$(echo "$CASE_REG" | jq -r '.id')
 
-          wf_curl PATCH "https://api.webflow.com/v2/sites/$SITE_ID/registered_scripts/global_script" \
-            "{\"hostedLocation\":\"https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@${GITHUB_REF_NAME}/dist/global.js\",\"integrityHash\":\"$GLOBAL_HASH\",\"version\":\"$VERSION\"}"
+          GLOBAL_REG=$(wf_curl POST "https://api.webflow.com/v2/sites/$SITE_ID/registered_scripts" \
+            "{\"type\":\"hosted\",\"displayName\":\"Global Script v${VERSION_NODOTS}\",\"hostedLocation\":\"https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@${GITHUB_REF_NAME}/dist/global.js\",\"integrityHash\":\"$GLOBAL_HASH\",\"version\":\"$VERSION\"}")
+          GLOBAL_SCRIPT_ID=$(echo "$GLOBAL_REG" | jq -r '.id')
 
+          echo "Registered: case=$CASE_SCRIPT_ID global=$GLOBAL_SCRIPT_ID"
+
+          # Apply to site and case template page
           wf_curl PUT "https://api.webflow.com/v2/sites/$SITE_ID/custom_code" \
-            "{\"scripts\":[{\"id\":\"global_script\",\"location\":\"footer\",\"version\":\"$VERSION\"}]}"
+            "{\"scripts\":[{\"id\":\"$GLOBAL_SCRIPT_ID\",\"location\":\"footer\",\"version\":\"$VERSION\"}]}"
 
           wf_curl PUT "https://api.webflow.com/v2/pages/$CASE_PAGE_ID/custom_code" \
-            "{\"scripts\":[{\"id\":\"case_script\",\"location\":\"footer\",\"version\":\"$VERSION\"}]}"
+            "{\"scripts\":[{\"id\":\"$CASE_SCRIPT_ID\",\"location\":\"footer\",\"version\":\"$VERSION\"}]}"
       - uses: softprops/action-gh-release@v2
         with:
           files: dist/*.js
