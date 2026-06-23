@@ -45,10 +45,10 @@ jobs:
               -d "$BODY")
             STATUS=$(echo "$OUT" | tail -n1)
             BODY_OUT=$(echo "$OUT" | head -n-1)
-            echo "$METHOD $URL → $STATUS"
+            echo "$METHOD $URL → $STATUS" >&2
             if [ "$STATUS" -lt 200 ] || [ "$STATUS" -ge 300 ]; then
-              echo "Error response: $BODY_OUT"
-              exit 1
+              echo "Error response: $BODY_OUT" >&2
+              return 1
             fi
             echo "$BODY_OUT"
           }
