@@ -53,14 +53,15 @@ jobs:
             echo "$BODY_OUT"
           }
 
-          # Register new scripts for this version and capture the IDs Webflow assigns
-          CASE_REG=$(wf_curl POST "https://api.webflow.com/v2/sites/$SITE_ID/registered_scripts/hosted" \
-            "{\"displayName\":\"Case Script v${VERSION_NODOTS}\",\"hostedLocation\":\"https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@${GITHUB_REF_NAME}/dist/case.js\",\"integrityHash\":\"$CASE_HASH\",\"version\":\"$VERSION\"}")
-          CASE_SCRIPT_ID=$(echo "$CASE_REG" | jq -r '.id')
+          CASE_SCRIPT_ID="case_script_v${VERSION_NODOTS}"
+          GLOBAL_SCRIPT_ID="global_script_v${VERSION_NODOTS}"
 
-          GLOBAL_REG=$(wf_curl POST "https://api.webflow.com/v2/sites/$SITE_ID/registered_scripts/hosted" \
-            "{\"displayName\":\"Global Script v${VERSION_NODOTS}\",\"hostedLocation\":\"https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@${GITHUB_REF_NAME}/dist/global.js\",\"integrityHash\":\"$GLOBAL_HASH\",\"version\":\"$VERSION\"}")
-          GLOBAL_SCRIPT_ID=$(echo "$GLOBAL_REG" | jq -r '.id')
+          # Register scripts for this version
+          wf_curl POST "https://api.webflow.com/v2/sites/$SITE_ID/registered_scripts/hosted" \
+            "{\"display_name\":\"Case Script v${VERSION_NODOTS}\",\"hosted_location\":\"https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@${GITHUB_REF_NAME}/dist/case.js\",\"integrity_hash\":\"$CASE_HASH\",\"version\":\"$VERSION\"}" > /dev/null
+
+          wf_curl POST "https://api.webflow.com/v2/sites/$SITE_ID/registered_scripts/hosted" \
+            "{\"display_name\":\"Global Script v${VERSION_NODOTS}\",\"hosted_location\":\"https://cdn.jsdelivr.net/gh/Advant-Digital/advant-webflow@${GITHUB_REF_NAME}/dist/global.js\",\"integrity_hash\":\"$GLOBAL_HASH\",\"version\":\"$VERSION\"}" > /dev/null
 
           echo "Registered: case=$CASE_SCRIPT_ID global=$GLOBAL_SCRIPT_ID"
 
