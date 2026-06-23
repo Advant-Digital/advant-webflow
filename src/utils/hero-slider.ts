@@ -16,7 +16,7 @@ function buildHeroSlides(el: HTMLElement): void {
 
   list.innerHTML = ''
 
-  const videoUrl = document.querySelector<HTMLElement>('[data-hero-video-url]')?.getAttribute('data-hero-video-url')?.trim()
+  const videoUrl = (el.getAttribute('data-hero-video-url') ?? document.querySelector<HTMLElement>('[data-hero-video-url]')?.getAttribute('data-hero-video-url'))?.trim()
   if (videoUrl) {
     const vimeoId = extractVimeoId(videoUrl)
     if (vimeoId) {
