@@ -5,6 +5,40 @@ import css from './hero-slider.css'
 
 let stylesInjected = false
 
+function extractVimeoId(url: string): string | null {
+  const match = url.trim().match(/(?:vimeo\.com\/(?:video\/)?|^)(\d+)/)
+  return match ? match[1] : null
+}
+
+function buildHeroSlides(el: HTMLElement): void {
+  const list = el.querySelector<HTMLElement>('.splide__list')
+  if (!list) return
+
+  list.innerHTML = ''
+
+  const videoUrl = document.querySelector<HTMLElement>('[data-hero-video-url]')?.getAttribute('data-hero-video-url')?.trim()
+  if (videoUrl) {
+    const vimeoId = extractVimeoId(videoUrl)
+    if (vimeoId) {
+      const li = document.createElement('li')
+      li.className = 'splide__slide'
+      li.setAttribute('data-splide-html-video', `https://player.vimeo.com/video/${vimeoId}?dnt=1&title=0&byline=0&portrait=0`)
+      const thumb = document.createElement('div')
+      thumb.setAttribute('data-video-thumb', '')
+      li.appendChild(thumb)
+      list.appendChild(li)
+    }
+  }
+
+  document.querySelectorAll<HTMLImageElement>('[data-hero-slide-img]').forEach(img => {
+    const li = document.createElement('li')
+    li.className = 'splide__slide'
+    const clone = img.cloneNode(true) as HTMLImageElement
+    li.appendChild(clone)
+    list.appendChild(li)
+  })
+}
+
 export function injectHeroSliderStyles(): void {
   if (stylesInjected) return
   stylesInjected = true
@@ -18,6 +52,9 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
     ? document.querySelector<HTMLElement>(container)
     : container
   if (!el) return
+
+  buildHeroSlides(el)
+  if (!el.querySelector('.splide__slide')) return
 
   injectHeroSliderStyles()
 

@@ -66,7 +66,6 @@ All CMS collection names, field names, HTML classes, and IDs must be in **Englis
 | Category | Standalone | Drives related cases filter |
 | Coworkers | Standalone | Advant team members |
 | Awards | Standalone | Reusable awards |
-| Hero Media | Nested | Slideshow items per case |
 | Insights | Nested | Challenge insight cards per case |
 | Key Numbers | Nested | Stats per case |
 | Result Cards | Nested | Result descriptions per case |
@@ -84,6 +83,8 @@ All CMS collection names, field names, HTML classes, and IDs must be in **Englis
 | Hero Preamble | Plain text (long) | Lead text below hero headline. |
 | Hero Sticker Text | Plain text | Circular sticker overlay on hero media. Hidden if empty. |
 | Hero Sticker Color | Option (Lime / Lilac / Pink / Sand) | Hidden if empty. |
+| Hero Video URL | Plain text | Optional. Vimeo URL or ID. If set, video renders first in the slideshow via dynamic embed. |
+| Hero Images | Multi-image | Image slides. Ordered by drag-to-reorder in CMS. Rendered after the video if one is set. |
 | Tags | Multi-reference → Tags | Clickable filterable pills. |
 | Client | Plain text | e.g. "Region Värmland" |
 | Mission | Plain text | |
@@ -152,21 +153,6 @@ One category per case. Used to auto-fill Related Cases when fewer than 3 are man
 | Title | Plain text | e.g. "Gold in Guldvargen 2019" |
 
 Awards are reusable across cases. Case-specific nomination text lives in the Case Awards junction collection.
-
----
-
-### Hero Media (nested)
-
-Supports a mixed image/video slideshow. Editor controls order via Sort Order.
-
-| Field | Type | Notes |
-|---|---|---|
-| Sort Order | Number | |
-| Media Type | Option (Image / Video) | |
-| Image | Image | Used when type = Image |
-| Video URL | Plain text | Vimeo URL or ID |
-| Video Thumbnail | Image | Preview image shown before video plays |
-| Case | Reference → Case | |
 
 ---
 
@@ -251,6 +237,7 @@ These sections must be built as Webflow Components (symbols) so styling updates 
 
 ## Key Implementation Notes (case.ts)
 
+- **Hero slideshow** — video slide (dynamic embed) always renders first if `Hero Video URL` is set; image slides from the `Hero Images` multi-image field follow in CMS drag-order. Max one video per case.
 - **Hero Heading fallback** — if `Hero Heading` field is empty, render `Name` as the H1
 - **"See results" button** — auto-shown in hero only if the `#results` section exists in the DOM; hidden otherwise
 - **Related Cases auto-fill** — show manually selected cases first; fill remaining slots up to 3 with cases from the same Category, excluding current case and already-shown cases
