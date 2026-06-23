@@ -5392,7 +5392,7 @@
     const list = el.querySelector(".splide__list");
     if (!list) return;
     list.innerHTML = "";
-    const videoUrl = document.querySelector("[data-hero-video-url]")?.getAttribute("data-hero-video-url")?.trim();
+    const videoUrl = (el.getAttribute("data-hero-video-url") ?? document.querySelector("[data-hero-video-url]")?.getAttribute("data-hero-video-url"))?.trim();
     if (videoUrl) {
       const vimeoId = extractVimeoId(videoUrl);
       if (vimeoId) {
