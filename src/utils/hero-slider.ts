@@ -39,11 +39,18 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
       const thumb = document.createElement('div')
       thumb.setAttribute('data-video-thumb', '')
 
+      // Play button always visible so user knows the slide is interactive
+      const playBtn = document.createElement('div')
+      playBtn.className = 'hero-play-btn'
+      playBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>'
+      thumb.appendChild(playBtn)
+
+      // Thumbnail image inserted before play button so it renders behind it
       const appendThumb = (url: string) => {
         const img = document.createElement('img')
         img.src = url
-        img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;'
-        thumb.appendChild(img)
+        img.alt = ''
+        thumb.insertBefore(img, playBtn)
       }
 
       const cmsThumb = document.querySelector<HTMLImageElement>('[data-hero-video-thumb]')
