@@ -1,13 +1,13 @@
+img[data-hero-video-thumb] { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: 0 !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; pointer-events: none !important; }
 .splide__slide { overflow: hidden; position: relative; }
 [data-slide-progress-bar] { position: absolute; top: 0; left: 0; height: 3px; width: 0%; background: #D6F277; z-index: 30; pointer-events: none; transition: opacity 0.3s; }
 .splide__video { position: absolute; inset: 0; z-index: 1; display: block !important; }
 .splide__video__wrapper,
 .splide__video__wrapper > div { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
 .splide__video__wrapper iframe { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
-[data-video-thumb] { position: absolute; inset: 0; z-index: 10; cursor: pointer; background: #111; transition: opacity 0.3s; display: flex; align-items: center; justify-content: center; }
+[data-video-thumb] { position: absolute; inset: 0; z-index: 10; cursor: pointer; background: #111; transition: opacity 0.3s; }
 [data-video-thumb] img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-[data-video-thumb] .hero-play-btn { position: relative; z-index: 1; pointer-events: none; display: flex; }
-[data-video-thumb] .hero-play-btn svg { display: block; fill: #fff; width: 56px; height: 56px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
+[data-video-play-btn] svg { display: block; fill: #fff; width: 56px; height: 56px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
 .hero-video-controls { position: absolute !important; bottom: 0; left: 0; right: 0; z-index: 20; display: none; }
 [data-video-timeline] { position: relative; cursor: pointer; flex: 1; background: rgba(214, 242, 119, 0.25); }
 [data-video-progress] { position: absolute; top: 0; left: 0; height: 100%; width: 0%; pointer-events: none; background: #D6F277; }
