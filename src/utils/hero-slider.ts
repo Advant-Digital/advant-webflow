@@ -42,7 +42,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
       const playBtn = document.createElement('div')
       playBtn.setAttribute('data-video-play-btn', '')
       // Inline styles beat any Webflow class-based CSS that may exist for this element
-      playBtn.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;pointer-events:none;display:flex;'
+      playBtn.style.cssText = 'z-index:1;pointer-events:none;display:flex;'
       playBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>'
       thumb.appendChild(playBtn)
 
