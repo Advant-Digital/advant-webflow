@@ -5409,10 +5409,10 @@
         slide.setAttribute("data-splide-vimeo", vimeoId);
         const thumb = document.createElement("div");
         thumb.setAttribute("data-video-thumb", "");
-        const thumbImg = document.querySelector("[data-hero-video-thumb]");
-        if (thumbImg?.src) {
+        const thumbUrl = el.getAttribute("data-hero-video-thumb");
+        if (thumbUrl) {
           const img = document.createElement("img");
-          img.src = thumbImg.src;
+          img.src = thumbUrl;
           img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block;";
           thumb.appendChild(img);
         }
