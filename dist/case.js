@@ -5409,12 +5409,20 @@
         slide.setAttribute("data-splide-vimeo", vimeoId);
         const thumb = document.createElement("div");
         thumb.setAttribute("data-video-thumb", "");
-        const thumbImg = document.querySelector("[data-hero-video-thumb]");
-        if (thumbImg?.src) {
+        const appendThumb = (url) => {
           const img = document.createElement("img");
-          img.src = thumbImg.src;
+          img.src = url;
           img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block;";
           thumb.appendChild(img);
+        };
+        const cmsThumb = document.querySelector("[data-hero-video-thumb]");
+        if (cmsThumb?.src) {
+          appendThumb(cmsThumb.src);
+        } else {
+          fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vimeoId}`).then((r) => r.json()).then((data) => {
+            if (data?.thumbnail_url) appendThumb(data.thumbnail_url);
+          }).catch(() => {
+          });
         }
         slide.appendChild(thumb);
         list.prepend(slide);
