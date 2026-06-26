@@ -5488,7 +5488,7 @@
         autoplay: false,
         mute: false,
         hideControls: true,
-        disableOverlayUI: true,
+        disableOverlayUI: false,
         playerOptions: {
           vimeo: {
             title: false,
@@ -5578,7 +5578,7 @@
     const videoComponent = () => splide.Components.Video;
     el.addEventListener("click", (e) => {
       const target = e.target;
-      if (!target.closest("[data-video-thumb]") && !target.closest(".splide__video__play")) return;
+      if (!target.closest("[data-video-thumb]")) return;
       if (isPlaying) videoComponent()?.pause();
       else videoComponent()?.play();
     });

@@ -133,7 +133,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
       autoplay: false,
       mute: false,
       hideControls: true,
-      disableOverlayUI: true,
+      disableOverlayUI: false,
       playerOptions: {
         vimeo: {
           title: false,
@@ -217,7 +217,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
 
   el.addEventListener('click', e => {
     const target = e.target as HTMLElement
-    if (!target.closest('[data-video-thumb]') && !target.closest('.splide__video__play')) return
+    if (!target.closest('[data-video-thumb]')) return
     if (isPlaying) videoComponent()?.pause()
     else videoComponent()?.play()
   })
