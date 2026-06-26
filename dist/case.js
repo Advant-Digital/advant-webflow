@@ -5388,31 +5388,6 @@
     const match = url.trim().match(/(?:vimeo\.com\/(?:video\/)?|^)(\d+)/);
     return match ? match[1] : null;
   }
-  function buildHeroSlides(el) {
-    const list = el.querySelector(".splide__list");
-    if (!list) return;
-    list.innerHTML = "";
-    const videoUrl = (el.getAttribute("data-hero-video-url") ?? document.querySelector("[data-hero-video-url]")?.getAttribute("data-hero-video-url"))?.trim();
-    if (videoUrl) {
-      const vimeoId = extractVimeoId(videoUrl);
-      if (vimeoId) {
-        const li = document.createElement("li");
-        li.className = "splide__slide";
-        li.setAttribute("data-splide-html-video", `https://player.vimeo.com/video/${vimeoId}?dnt=1&title=0&byline=0&portrait=0`);
-        const thumb = document.createElement("div");
-        thumb.setAttribute("data-video-thumb", "");
-        li.appendChild(thumb);
-        list.appendChild(li);
-      }
-    }
-    document.querySelectorAll("[data-hero-slide-img]").forEach((img) => {
-      const li = document.createElement("li");
-      li.className = "splide__slide";
-      const clone = img.cloneNode(true);
-      li.appendChild(clone);
-      list.appendChild(li);
-    });
-  }
   function injectHeroSliderStyles() {
     if (stylesInjected) return;
     stylesInjected = true;
@@ -5423,8 +5398,29 @@
   function initHeroSlider(container = "[data-hero-slider]") {
     const el = typeof container === "string" ? document.querySelector(container) : container;
     if (!el) return;
-    buildHeroSlides(el);
-    if (!el.querySelector(".splide__slide")) return;
+    const list = el.querySelector(".splide__list");
+    if (!list) return;
+    const videoUrl = el.getAttribute("data-hero-video-url")?.trim();
+    if (videoUrl) {
+      const vimeoId = extractVimeoId(videoUrl);
+      if (vimeoId) {
+        const slide = document.createElement("div");
+        slide.className = "splide__slide";
+        slide.setAttribute("data-splide-html-video", `https://player.vimeo.com/video/${vimeoId}?dnt=1&title=0&byline=0&portrait=0`);
+        const thumb = document.createElement("div");
+        thumb.setAttribute("data-video-thumb", "");
+        const thumbImg = document.querySelector("[data-hero-video-thumb]");
+        if (thumbImg?.src) {
+          const img = document.createElement("img");
+          img.src = thumbImg.src;
+          img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block;";
+          thumb.appendChild(img);
+        }
+        slide.appendChild(thumb);
+        list.prepend(slide);
+      }
+    }
+    if (!list.querySelector(".splide__slide")) return;
     injectHeroSliderStyles();
     let activeIframe = null;
     let activeSdkPlayer = null;
@@ -5473,6 +5469,12 @@
       if (value !== void 0) payload.value = value;
       activeIframe.contentWindow.postMessage(payload, "https://player.vimeo.com");
     };
+    document.querySelectorAll(".hero-video-controls").forEach((controls) => {
+      el.appendChild(controls);
+    });
+    const progressBar = document.createElement("div");
+    progressBar.setAttribute("data-slide-progress-bar", "");
+    el.appendChild(progressBar);
     const splide = new Splide(el, {
       type: "slide",
       rewind: true,
@@ -5574,12 +5576,6 @@
       progressBar.style.width = "0%";
     });
     const videoComponent = () => splide.Components.Video;
-    document.querySelectorAll(".hero-video-controls").forEach((controls) => {
-      el.appendChild(controls);
-    });
-    const progressBar = document.createElement("div");
-    progressBar.setAttribute("data-slide-progress-bar", "");
-    el.appendChild(progressBar);
     el.addEventListener("click", (e) => {
       const target = e.target;
       if (!target.closest("[data-video-thumb]") && !target.closest(".splide__video__play")) return;

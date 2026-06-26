@@ -10,35 +10,6 @@ function extractVimeoId(url: string): string | null {
   return match ? match[1] : null
 }
 
-function buildHeroSlides(el: HTMLElement): void {
-  const list = el.querySelector<HTMLElement>('.splide__list')
-  if (!list) return
-
-  list.innerHTML = ''
-
-  const videoUrl = (el.getAttribute('data-hero-video-url') ?? document.querySelector<HTMLElement>('[data-hero-video-url]')?.getAttribute('data-hero-video-url'))?.trim()
-  if (videoUrl) {
-    const vimeoId = extractVimeoId(videoUrl)
-    if (vimeoId) {
-      const li = document.createElement('li')
-      li.className = 'splide__slide'
-      li.setAttribute('data-splide-html-video', `https://player.vimeo.com/video/${vimeoId}?dnt=1&title=0&byline=0&portrait=0`)
-      const thumb = document.createElement('div')
-      thumb.setAttribute('data-video-thumb', '')
-      li.appendChild(thumb)
-      list.appendChild(li)
-    }
-  }
-
-  document.querySelectorAll<HTMLImageElement>('[data-hero-slide-img]').forEach(img => {
-    const li = document.createElement('li')
-    li.className = 'splide__slide'
-    const clone = img.cloneNode(true) as HTMLImageElement
-    li.appendChild(clone)
-    list.appendChild(li)
-  })
-}
-
 export function injectHeroSliderStyles(): void {
   if (stylesInjected) return
   stylesInjected = true
@@ -53,8 +24,35 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
     : container
   if (!el) return
 
-  buildHeroSlides(el)
-  if (!el.querySelector('.splide__slide')) return
+  const list = el.querySelector<HTMLElement>('.splide__list')
+  if (!list) return
+
+  // Prepend video slide — Webflow has already rendered image slides in the list
+  const videoUrl = el.getAttribute('data-hero-video-url')?.trim()
+  if (videoUrl) {
+    const vimeoId = extractVimeoId(videoUrl)
+    if (vimeoId) {
+      const slide = document.createElement('div')
+      slide.className = 'splide__slide'
+      slide.setAttribute('data-splide-html-video', `https://player.vimeo.com/video/${vimeoId}?dnt=1&title=0&byline=0&portrait=0`)
+
+      const thumb = document.createElement('div')
+      thumb.setAttribute('data-video-thumb', '')
+
+      const thumbImg = document.querySelector<HTMLImageElement>('[data-hero-video-thumb]')
+      if (thumbImg?.src) {
+        const img = document.createElement('img')
+        img.src = thumbImg.src
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;'
+        thumb.appendChild(img)
+      }
+
+      slide.appendChild(thumb)
+      list.prepend(slide)
+    }
+  }
+
+  if (!list.querySelector('.splide__slide')) return
 
   injectHeroSliderStyles()
 
@@ -112,6 +110,15 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
     if (value !== undefined) payload.value = value
     activeIframe.contentWindow.postMessage(payload, 'https://player.vimeo.com')
   }
+
+  // Move controls and progress bar into the slider element before mounting
+  document.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(controls => {
+    el.appendChild(controls)
+  })
+
+  const progressBar = document.createElement('div')
+  progressBar.setAttribute('data-slide-progress-bar', '')
+  el.appendChild(progressBar)
 
   const splide = new Splide(el, {
     type: 'slide',
@@ -207,14 +214,6 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
   })
 
   const videoComponent = () => (splide.Components as any).Video
-
-  document.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(controls => {
-    el.appendChild(controls)
-  })
-
-  const progressBar = document.createElement('div')
-  progressBar.setAttribute('data-slide-progress-bar', '')
-  el.appendChild(progressBar)
 
   el.addEventListener('click', e => {
     const target = e.target as HTMLElement
