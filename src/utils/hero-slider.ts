@@ -34,7 +34,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
     if (vimeoId) {
       const slide = document.createElement('div')
       slide.className = 'splide__slide'
-      slide.setAttribute('data-splide-html-video', `https://player.vimeo.com/video/${vimeoId}?dnt=1&title=0&byline=0&portrait=0`)
+      slide.setAttribute('data-splide-vimeo', vimeoId)
 
       const thumb = document.createElement('div')
       thumb.setAttribute('data-video-thumb', '')
