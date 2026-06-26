@@ -57,7 +57,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
       if (cmsThumb?.src) {
         appendThumb(cmsThumb.src)
       } else {
-        fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vimeoId}`)
+        fetch(`https://vimeo.com/api/oembed.json?url=${encodeURIComponent(`https://vimeo.com/${vimeoId}`)}`)
           .then(r => r.json())
           .then((data: any) => { if (data?.thumbnail_url) appendThumb(data.thumbnail_url) })
           .catch(() => {})
@@ -166,7 +166,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
 
   splide.on('video:play', (extPlayer: any) => {
     const slide = getSlide(splide.index)
-    slide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.opacity = '0' })
+    slide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.opacity = '0'; t.style.pointerEvents = 'none' })
 
     el.querySelectorAll<HTMLElement>('.splide__video__wrapper').forEach(wrapper => {
       wrapper.style.width = '100%'
@@ -212,7 +212,7 @@ export function initHeroSlider(container: HTMLElement | string = '[data-hero-sli
 
   splide.on('move', (_newIndex: number, prevIndex: number) => {
     const leavingSlide = getSlide(prevIndex)
-    leavingSlide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.opacity = '' })
+    leavingSlide?.querySelectorAll<HTMLElement>('[data-video-thumb]').forEach(t => { t.style.opacity = ''; t.style.pointerEvents = '' })
     el.querySelectorAll<HTMLElement>('.hero-video-controls').forEach(c => { c.style.display = 'none' })
     activeIframe = null
     activeSdkPlayer = null
