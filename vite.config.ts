@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 // Note: Build is handled by build.js using esbuild, not Vite's Rollup.
 // Rollup 4 does not support IIFE format with multiple entry points,
@@ -6,5 +6,6 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   test: {
     environment: 'node',
+    passWithNoTests: true,
   },
 })

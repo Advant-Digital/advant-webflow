@@ -13,7 +13,6 @@ npm install          # Install dependencies
 npm run build        # Type-check (tsc) and build IIFE bundles to dist/
 npm test             # Run tests once
 npm run test:watch   # Run tests in watch mode
-npm run dev          # Vite dev server
 ```
 
 ## Releasing
@@ -33,7 +32,7 @@ Two parallel layers:
 **1. This repo (TypeScript + esbuild)**
 - `src/global/index.ts` — loaded on every page
 - `src/pages/case.ts` — case page logic only
-- `src/utils/cms.ts` — pure utility functions (unit tested)
+- `src/utils/hero-slider.ts` — Splide video slider with custom controls
 - Built as IIFEs via esbuild (`build.js`); one JS file per entry point
 - Vitest used for tests (via `vite.config.ts` test config)
 - Note: Vite/Rollup 4 cannot produce IIFE format with multiple entry points — esbuild handles building, Vite handles testing only

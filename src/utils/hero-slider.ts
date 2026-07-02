@@ -10,7 +10,7 @@ function extractVimeoId(url: string): string | null {
   return match ? match[1] : null
 }
 
-export function injectHeroSliderStyles(): void {
+function injectHeroSliderStyles(): void {
   if (stylesInjected) return
   stylesInjected = true
   const style = document.createElement('style')

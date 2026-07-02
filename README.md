@@ -12,7 +12,6 @@ src/
   pages/case.ts       # Case page interactions
   utils/
     hero-slider.ts    # Splide video slider with custom controls
-    cms.ts            # Shared CMS utilities (unit tested)
 build.js              # esbuild → dist/*.js (IIFE format)
 ```
 
